@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,7 +21,11 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     const user = await this.findOneByEmail(createUserDto.email);
     if (user) throw new ConflictException('Email already registered');
-    return await this.userRepository.save(createUserDto);
+    const hashPassword = await bcrypt.hash(createUserDto.password, 12);
+    return await this.userRepository.save({
+      ...createUserDto,
+      password: hashPassword,
+    });
   }
 
   async findAll(): Promise<User[]> {
