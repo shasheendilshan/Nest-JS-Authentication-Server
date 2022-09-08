@@ -27,9 +27,9 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users' })
   findAll() {
     return this.userService.findAll();
