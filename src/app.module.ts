@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+
       inject: [ConfigService],
       async useFactory(config: ConfigService) {
         return {

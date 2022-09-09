@@ -45,6 +45,7 @@ export class UserService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 
+    user.type = updateUserDto.type;
     user.firstName = updateUserDto.firstName;
     user.lastName = updateUserDto.lastName;
     user.email = updateUserDto.email;
