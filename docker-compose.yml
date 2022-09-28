@@ -1,36 +1,41 @@
 version: '3.9' # optional since v1.27.0
 services:
-  api:
+  main:
     container_name: Nest_Authentication_Server
     build:
-      dockerfile: Dockerfile
       context: .
-    depends_on:
-      - db
-    environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - JWT_SECRET=${JWT_SECRET}
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
-      - '8080:3000'
+      - ${SERVER_PORT}:3000
+      - '9229:9229'
+    command: npm run start:dev
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - postgres
 
-  db:
-    container_name: Auth_Database
+  postgres:
+    container_name: postgres
     image: postgres:14.1-alpine
-    restart: always
+    networks:
+      - webnet
 
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PG_DATA: /var/lib/postgresql/data
     ports:
       - '5432:5432'
     volumes:
-      - db:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
+networks:
+  webnet:
 volumes:
-  db:
-    driver: local
+  pgdata:
